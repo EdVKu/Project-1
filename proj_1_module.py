@@ -75,6 +75,4 @@ def hamiltonian_solve(f, f0 = 1, h = 0.1, n = 100,d = 1, t0 = 0, method = 0):
         return StormerV(f, f0, n, h)
     else:
         return None
-a = dynamics_solve(lambda t,x : np.exp(-x*t), 1,5e-5,100)
-
-print(a)
+    
