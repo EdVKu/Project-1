@@ -1,1 +1,5 @@
-# First project for PHYSICS170N...
+# First project for PHYSICS170N
+
+Authors:
+
+* Eduardo Vazquez Kuri
