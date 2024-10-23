@@ -21,7 +21,7 @@ def rkuta2(f,f0,n,h):
         k2n = h*f(t, s0 + 0.5*k1n)
         s.append(s0 + k2n)
         s0 += k2n
-        t+=h
+        t += h
     return s
 
 def rkuta4(f,f0,n,h):
@@ -37,7 +37,7 @@ def rkuta4(f,f0,n,h):
         si = s0 + k1n/6 + k2n/3 + k3n/3 + k4n/6
         s.append(si)
         s0 = si
-        t+=h
+        t += h
     return s
 
 def SEuler(f,f0,n,h):
