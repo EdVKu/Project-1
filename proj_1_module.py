@@ -54,41 +54,38 @@ def StormerV(f,g,f0,n,h):
 
     return p, q
 
-def dynamics_solve(f, f0 = 1, h = 0.1, n = 100,d = 1, t0 = 0, method = 0):
-    method = input("please enter a number to choose your method (0 = Euler, 1 = Runge Kutta 2, 2 = Runge Kutta 4)")
-    if int(method) == 0:
-        vsol = []
+def dynamics_solve(f, f0 = 1, h = 0.1, n = 100, D = 1, t0 = 0, method = "Euler"):
+    if method == "Euler":
+        vsol = [euler(f[0], f0, n, h)[1]]
         for i in range(D):
-            vsol.append(euler(f[i], f0, n, h))
+            vsol.append(euler(f[i], f0, n, h)[0])
         return np.array(vsol)
-    elif int(method) == 1:
-        vsol = []
+    elif method == "RK2":
+        vsol = [rkuta2(f[0], f0, n, h)[1]]
         for i in range(D):
-            vsol.append(rkuta2(f[i], f0, n, h))
+            vsol.append(rkuta2(f[i], f0, n, h)[0])
         return np.array(vsol)
-    elif int(method) == 2:
-        vsol = []
+    elif method == "RK4":
+        vsol = [rkuta4(f[0], f0, n, h)[1]]
         for i in range(D):
-            vsol.append(rkuta4(f[i], f0, n, h))
+            vsol.append(rkuta4(f[i], f0, n, h)[0])
         return np.array(vsol)
     else:
         return None
-def hamiltonian_solve(f,g, f0 = 1, h = 0.1, n = 100,D = 1, t0 = 0, method = 0):
-    if type(f)!= "list":
-        f = list(f)
-    method = input("please enter a number to choose your method (0 = Euler, 1 = Runge Kutta 2, 2 = Runge Kutta 4, 3 = Symplectic Euler, 4 = Stormer-Verlet)")
-    if 0==int(method)<=2:
+def hamiltonian_solve(f,g, f0 = 1, h = 0.1, n = 100, D = 1, t0 = 0, method = "Euler"):
+    if method != "SE" or method != "SV":
         dynamics_solve(f, f0, h, n, D, t0, method)
-    elif int(method) == 3:
-        vsol = []
+    elif method == "SE":
+        vsol = [SEuler(f[0], g[0], f0, n, h)[1]]
         for i in range(D):
-            vsol.append(SEuler(f[i], f0, n, h))
+            vsol.append(SEuler(f[i], g[i], f0, n, h)[0])
+        vsol.appen()
         return np.array(vsol)
-    elif int(method) == 4:
-        vsol = []
+    elif method == "SV":
+        vsol = [StormerV(f[0], g[0], f0, n, h)[1]]
         for i in range(D):
-            vsol.append(StormerV(f[i], f0, n, h))
+            vsol.append(StormerV(f[i], g[i], f0, n, h)[0])
         return np.array(vsol)
     else:
         return "None"
-    
+
