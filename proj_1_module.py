@@ -58,17 +58,14 @@ def SEuler(f,g,f0,g0,h,n,t_o):
 
   return p, q, T
 
-def StormerV(f,g,f0,g0,h,n,t_o):
-  p, q, T = np.zeros(n+2), np.zeros(n+2), [t_o]
-  t = t_o
+def StormerV(f,f0,g0,h,n,t_o = 0):
+  p, q = np.zeros(n+1), np.zeros(n+1), 
+  T = np.arange(0,(n+0.5)*h, h)
   p[0], q[0] = f0, g0
   
   for i in range(n):
-      p[i+1] = p[i] - h*0.5*f(q[i])
-      q[i+1] = q[i] + h*g(p[i+1])
-      p[i+2] = p[i+1] - h*0.5*f(q[i+1])
-      t += h
-      T.append(t)
+      p[i+1] = p[i]+q[i]*h +(f(p[i])*h**2*0.5)
+      q[i+1] = q[i] + f(p[i])*h
 
   return p, q, T
 
@@ -111,13 +108,12 @@ def hamiltonian_solve(f,g, f0 = 1,g0=1, h = 0.1, n = 100, D = 1, t_o = 0, method
 
     return np.array(vsolp),np.array(vsolq)
   elif method == "SV":
-    stor = StormerV(f[0],g[0],f0,g0,h,n,t_o)
-    solp, solq = [],[]
+    stor = StormerV(f[0],f0,g0,h,n,t_o)
+    sol= []
     for i in range(D):
-      solp.append(StormerV(f[i],g[i],f0,g0,h,n,t_o)[0])
-      solq.append(StormerV(f[i],g[i],f0,g0,h,n,t_o)[1])
+      solp.append(StormerV(f[i],f0,g0,h,n,t_o)[0])
     
-    return np.array(solp), np.array(solq), stor[-1]
+    return np.array(sol), stor[-1]
   elif method == "SE":
     seu = SEuler(f[0],g[0],f0,g0,h,n,t_o)
     solp, solq = [],[]
