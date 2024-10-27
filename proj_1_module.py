@@ -1,4 +1,3 @@
-import numpy as np
 def euler(f, f0, n, h, t_o = 0):
     t = t_o
     b = h*(n)-t_o
@@ -45,17 +44,24 @@ def rkuta4(f, f0, n, h, t_o = 0):
 
         t += h
     return s, T
-
-def SEuler(f, g, f0, n, h, t_o = 0):
-    p, q, T = np.zeros(n), np.zeros(n), []
-
+def SEuler(f,g,f0,g0,h,n,t_o):
+    p, q= np.zeros(n+1), np.zeros(n+1)
+    T = [t_o]
+    p[0], q[0] = f0, g0
+    t = t_o
+    for i in range(n):
+        p[i+1] = p[i] + f(q[i]) * h
+        q[i+1] = q[i] + g(p[i+1]) * h
+        t += h
+        T.append(t)
 
     return p, q, T
 
-def StormerV(f, g, f0, n, h, t_o = 0):
+def StormerV(f,g,f0,g0,h,n,t_o):
     p, q, T = [], [], []
 
     return p, q, T
+
 
 def dynamics_solve(f, f0 = 1, h = 0.1, n = 100, D = 1, t_o = 0, method = "Euler"):
     method_dict = {
@@ -68,22 +74,49 @@ def dynamics_solve(f, f0 = 1, h = 0.1, n = 100, D = 1, t_o = 0, method = "Euler"
     
     selected_method = method_dict[method]
     vsol = [selected_method(f[0], f0, n, h, t_o)[-1]]
-    vsol.extend(selected_method(f[i], f0, n, h, t_o)[0] for i in range(D))
+    for i in range(D):
+        vsol.append(selected_method(f[i], f0, n, h, t_o)[0])
+
     return np.array(vsol)
-def hamiltonian_solve(f,g, f0 = 1, h = 0.1, n = 100, D = 1, t_o = 0, method = "Euler"):
-    if method != "SE" or method != "SV":
-        for i in range(D):
-            vsol = [dynamics_solve(f[i],)]
-    elif method == "SE":
-        vsol = [SEuler(f[0], g[0], f0, n, h)[1]]
-        for i in range(D):
-            vsol.append(SEuler(f[i], g[i], f0, n, h)[0])
-        return np.array(vsol)
+def hamiltonian_solve(f,g, f0 = 1,g0=1, h = 0.1, n = 100, D = 1, t_o = 0, method = "Euler"):
+    if method == "Euler":
+      vsolp, vsolq = [euler(f[0],f0,h,n,t_o)[-1]],[euler(g[0],g0,h,n,t_o)[-1]]
+      for i in range(D):
+        vsolp.append(euler(f[i],f0,h,n,t_o))
+        vsolq.append(euler(g[i],g0,h,n,t_o))
+
+      return np.array(vsolp),np.array(vsolq)
+    elif method == "RK2":
+      vsolp, vsolq = [rkuta2(f[0],f0,h,n,t_o)[-1]],[rkuta2(g[0],g0,h,n,t_o)[-1]]
+      for i in range(D):
+        vsolp.append(rkuta2(f[i],f0,h,n,t_o))
+        vsolq.append(rkuta2(g[i],g0,h,n,t_o))
+
+      return np.array(vsolp),np.array(vsolq)
+    elif method == "RK4":
+      vsolp, vsolq = [rkuta4(f[0],f0,h,n,t_o)[-1]],[rkuta4(g[0],g0,h,n,t_o)[-1]]
+      for i in range(D):
+        vsolp.append(rkuta2(f[i],f0,h,n,t_o))
+        vsolq.append(rkuta2(g[i],g0,h,n,t_o))
+
+      return np.array(vsolp),np.array(vsolq)
     elif method == "SV":
-        vsol = [StormerV(f[0], g[0], f0, n, h)[1]]
-        for i in range(D):
-            vsol.append(StormerV(f[i], g[i], f0, n, h)[0])
-        return np.array(vsol)
+      stor = StormerV(f[0],g[0],f0,g0,h,n,t_o)
+      solp, solq = [],[]
+      for i in range(D):
+        solp.append(StormerV(f[i],g[i],f0,g0,h,n,t_o)[0])
+        solq.append(StormerV(f[i],g[i],f0,g0,h,n,t_o)[1])
+      
+      return np.array(solp), np.array(solq), stor[-1]
+    elif method == "SE":
+      seu = SEuler(f[0],g[0],f0,g0,h,n,t_o)
+      solp, solq = [],[]
+      for i in range(D):
+        psol,qsol = SEuler(f[i],g[i],f0,g0,h,n,t_o)
+        solp.append(psol)
+        solq.append(qsol)
+      
+      return np.array(solp), np.array(solq), seu[-1]
     else:
-        return "None"
+      return "None"
 
