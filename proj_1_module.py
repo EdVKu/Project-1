@@ -109,11 +109,12 @@ def hamiltonian_solve(f,g, f0 = 1,g0=1, h = 0.1, n = 100, D = 1, t_o = 0, method
     return np.array(vsolp),np.array(vsolq)
   elif method == "SV":
     stor = StormerV(f[0],f0,g0,h,n,t_o)
-    sol= []
+    solp, solq= [], []
     for i in range(D):
       solp.append(StormerV(f[i],f0,g0,h,n,t_o)[0])
+      solq.append(StormerV(f[i],f0,g0,h,n,t_o)[1])
     
-    return np.array(sol), stor[-1]
+    return np.array(solp), np.array(solq), stor[-1]
   elif method == "SE":
     seu = SEuler(f[0],g[0],f0,g0,h,n,t_o)
     solp, solq = [],[]
