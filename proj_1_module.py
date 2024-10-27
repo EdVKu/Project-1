@@ -1,3 +1,4 @@
+import numpy as np
 def euler(f, f0, n, h, t_o = 0):
     t = t_o
     b = h*(n)-t_o
