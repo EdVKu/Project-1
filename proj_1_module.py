@@ -1,7 +1,7 @@
 import numpy as np
-def euler(f,f0,n,h,t_o):
+def euler(f, f0, n, h, t_o = 0):
     t = t_o
-    b = h*(n+1)
+    b = h*(n)-t_o
     s0 = f0
     s, T = [],[]
     while t <= b:
@@ -12,9 +12,9 @@ def euler(f,f0,n,h,t_o):
         t += h
     return s, T
 
-def rkuta2(f,f0,n,h):
-    t = 0
-    b = h*(n+1)
+def rkuta2(f, f0, n, h, t_o = 0):
+    t = t_o
+    b = h*(n)-t_o
     s0 = f0
     s,T = [],[]
     while t<=b:
@@ -25,12 +25,11 @@ def rkuta2(f,f0,n,h):
         s0 += k2n
         t += h
     return s, T
-def T(n,h,t_o = 0):
-    dt = h*(n)-t_o
-    return [i*dt for i in range(n+1)]
-def rkuta4(f,f0,n,h):
+
+    
+def rkuta4(f, f0, n, h, t_o = 0):
     t = 0
-    b = h*(n+1)
+    b = h*(n)-t_o
     s0 = f0
     s,T = [],[]
 
@@ -47,18 +46,18 @@ def rkuta4(f,f0,n,h):
         t += h
     return s, T
 
-def SEuler(f,g,f0,n,h):
+def SEuler(f, g, f0, n, h, t_o = 0):
     p, q, T = np.zeros(n), np.zeros(n), []
 
 
     return p, q, T
 
-def StormerV(f,g,f0,n,h):
+def StormerV(f, g, f0, n, h, t_o = 0):
     p, q, T = [], [], []
 
     return p, q, T
 
-def dynamics_solve(f, f0 = 1, h = 0.1, n = 100, D = 1, t0 = 0, method = "Euler"):
+def dynamics_solve(f, f0 = 1, h = 0.1, n = 100, D = 1, t_o = 0, method = "Euler"):
     method_dict = {
         "Euler": euler,
         "RK2": rkuta2,
@@ -68,10 +67,10 @@ def dynamics_solve(f, f0 = 1, h = 0.1, n = 100, D = 1, t0 = 0, method = "Euler")
         return None
     
     selected_method = method_dict[method]
-    vsol = T(n,h,t0)
-    vsol.extend(selected_method(f[i], f0, n, h)[0] for i in range(D))
+    vsol = [selected_method(f[0], f0, n, h, t_o)[-1]]
+    vsol.extend(selected_method(f[i], f0, n, h, t_o)[0] for i in range(D))
     return np.array(vsol)
-def hamiltonian_solve(f,g, f0 = 1, h = 0.1, n = 100, D = 1, t0 = 0, method = "Euler"):
+def hamiltonian_solve(f,g, f0 = 1, h = 0.1, n = 100, D = 1, t_o = 0, method = "Euler"):
     if method != "SE" or method != "SV":
         for i in range(D):
             vsol = [dynamics_solve(f[i],)]
