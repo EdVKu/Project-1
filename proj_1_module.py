@@ -120,4 +120,3 @@ def hamiltonian_solve(f,g, f0 = 1,g0=1, h = 0.1, n = 100, D = 1, t_o = 0, method
       return np.array(solp), np.array(solq), seu[-1]
     else:
       return "None"
-
