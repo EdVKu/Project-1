@@ -1,5 +1,7 @@
 # First project for PHYSICS170N
 
-Authors:
+Author:
 
 * Eduardo Vazquez Kuri
+
+Got any doubts/suggestions/insults? Hit me up at vkurieduardo at gmail dot com.
