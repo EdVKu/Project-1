@@ -21,7 +21,7 @@ Need to get all my credits and might be useful to showcase my skillz.
 
 ## How good is it?
 
-It supports vector fields ($f \colon \mathbb{R}^n \to \mathbb{R}^n$) but:
+It supports vector fields ($f \colon \mathbb{R} \to \mathbb{R}^n$) but:
 
 * It's buggy.
 * It has barely any documentation. 
