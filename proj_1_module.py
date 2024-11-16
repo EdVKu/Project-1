@@ -116,7 +116,7 @@ def SEuler(f,g, f0,g0, n, h, t_o = 0):
 
   return list(p), list(q), T
 
-def dynamics_solve(f, f0 = 1,  n = 100,hf = 100, D = 1, t_o = 0, method = "Euler"):
+def dynamics_solve(f, f0 = [1],  n = 100,hf = 100, D = 1, t_o = 0, method = "Euler"):
     method_dict = {
         "Euler": euler,
         "RK2": rkuta2,
@@ -126,65 +126,65 @@ def dynamics_solve(f, f0 = 1,  n = 100,hf = 100, D = 1, t_o = 0, method = "Euler
         return None
 
     selected_method = method_dict[method]
-    vsol = [selected_method(f[0], f0, n, hf, t_o)[-1]]
+    vsol = [selected_method(f[0], f0[0], n, hf, t_o)[-1]]
     for i in range(D):
-        vsol.append(selected_method(f[i], f0, n, hf, t_o)[0])
+        vsol.append(selected_method(f[i], f0[i], n, hf, t_o)[0])
 
     return vsol
-def hamiltonian_solve(f,g, f0 = 1,g0=1,  n = 100, h = 0.1,hf = 100, D = 1, t_o = 0, method = "Euler"):
+def hamiltonian_solve(f,g, f0 = [1],g0=[1],  n = 100, h = 0.1,hf = 100, D = 1, t_o = 0, method = "Euler"):
   if method == "Euler":
     if D==1:
-      vsolp, vsolq, T = euler2(f[0], f0, g0, n, hf, t_o)
+      vsolp, vsolq, T = euler2(f[0], f0[0], g0[0], n, hf, t_o)
       return (vsolp), (vsolq), (T)
     else:
-      vsolp, vsolq, T = euler2(f[0], f0, g0, n, hf, t_o)
+      vsolp, vsolq, T = euler2(f[0], f0[0], g0[0], n, hf, t_o)
       for i in range(D):
-        eul = euler2(f[i], f0, g0, n, hf, t_o)
+        eul = euler2(f[i], f0[i], g0[i], n, hf, t_o)
         vsolp.append(eul[0])
         vsolq.append(eul[1])
 
       return vsolp, vsolq, T
   elif method == "RK2":
     if D==1:
-      vsolp, vsolq, T = rk2_2(f[0], f0, g0, n, hf, t_o)
+      vsolp, vsolq, T = rk2_2(f[0], f0[0], g0[0], n, hf, t_o)
       return vsolp, vsolq, T
     else:
-      vsolp, vsolq, T = rk2_2(f[0], f0, g0, n, hf, t_o)
+      vsolp, vsolq, T = rk2_2(f[0], f0[0], g0[0], n, hf, t_o)
       for i in range(D):
-        eul = rk2_2(f[i], f0, g0, n, hf, t_o)
+        eul = rk2_2(f[i], f0[i], g0[i], n, hf, t_o)
         vsolp.append(eul[0])
         vsolq.append(eul[1])
 
       return vsolp, vsolq, T
   elif method == "RK4":
     if D==1:
-      vsolp, vsolq, T = rk4_2(f[0], f0, g0, n, hf, t_o)
+      vsolp, vsolq, T = rk4_2(f[0], f0[0], g0[0], n, hf, t_o)
       return vsolp, vsolq, T
     else:
-      vsolp, vsolq, T = rk4_2(f[0], f0, g0, n, hf, t_o)
+      vsolp, vsolq, T = rk4_2(f[0], f0[0], g0[0], n, hf, t_o)
       for i in range(D):
-        eul = rk4_2(f[i], f0, g0, n, hf, t_o)
+        eul = rk4_2(f[i], f0[i], g0[i], n, hf, t_o)
         vsolp.append(eul[0])
         vsolq.append(eul[1])
 
       return vsolp, vsolq, T
   elif method == "SV":
-    solp, solq, T = StormerV(f[0], f0, g0, n, h, t_o)
+    solp, solq, T = StormerV(f[0], f0[0], g0[0], n, h, t_o)
     if D == 1:
       return solp, solq, T
     else:
       for i in range(D):
-        sverle = StormerV(f[i], f0, g0, n, h, t_o)
+        sverle = StormerV(f[i], f0[i], g0[i], n, h, t_o)
         solp.append(sverle[0])
         solq.append(sverle[1])
       return solp, solq, T
   elif method == "SE":
-    solp, solq, T = SEuler(f[0], g[0], f0, g0, n, h, t_o)
+    solp, solq, T = SEuler(f[0], g[0], f0[0], g0[0], n, h, t_o)
     if D ==1:
       return solp, solq, T
     else:
       for i in range(D):
-        seu = SEuler(f[i], g[i], f0, g0, n, h, t_o)
+        seu = SEuler(f[i], g[i], f0[i], g0[i], n, h, t_o)
         solp.append(seu[0])
         solq.append(seu[1])
 
