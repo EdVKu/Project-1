@@ -1,5 +1,8 @@
 import numpy as np
+# Se inicializan los parametros de inicio y el mallado temporal
+# en el método constructor
 
+# Start parameters and temporary grid are initialized in the builder method
 class integradores:
   def __init__(self, f0, t_o, g0, n, hf):
     self.f0 = f0
