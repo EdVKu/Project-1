@@ -14,24 +14,27 @@ class integradores:
 
   def euler(self, f, n, hf, to):
       
-      to = self.t_o
-      hf = self.hf
-      f0 = self.f0
-      h = ((hf)-to)/n
-      s0 = f0
-      s, T = [],[]
-      while t <= hf:
-          ssq = s0 + h*f(t, s0)
-          s.append(ssq)
-          T.append(t)
-          s0 = ssq
-          t += h
-      return s, T
-  
-  def euler2(self, f, f0,g0, n, hf, to):
     to = self.t_o
     hf = self.hf
     f0 = self.f0
+    n = self.n
+    h = ((hf)-to)/n
+    s0 = f0
+    s, T = [],[]
+    while t <= hf:
+        ssq = s0 + h*f(t, s0)
+        s.append(ssq)
+        T.append(t)
+        s0 = ssq
+        t += h
+    return s, T
+  
+  def euler2(self, f):
+    to = self.t_o
+    g0 = self.g0
+    hf = self.hf
+    f0 = self.f0
+    n = self.n
     h = ((hf)-to)/n
     s, v, T = [f0], [g0], [to]
     for i in range(n):
@@ -42,10 +45,11 @@ class integradores:
       T.append(T[i]+h)
     return v,s, T
 
-  def rkuta2(self, f, f0, n, hf, to):
+  def rkuta2(self, f):
       to = self.t_o
       hf = self.hf
       f0 = self.f0
+      n = self.n
       h = ((hf)-to)/n
       s0 = f0
       s,T = [],[]
@@ -58,8 +62,9 @@ class integradores:
           t += h
       return s, T
 
-  def rk2_2(self, f, f0,g0, n, hf, to):
+  def rk2_2(self, f):
     to = self.t_o
+    n = self.n
     hf = self.hf
     f0 = self.f0
     g0 = self.g0
@@ -79,7 +84,8 @@ class integradores:
       T.append(T[i] + h)
     return v,s, T
 
-  def rkuta4(self, f, f0, n, hf, to):
+  def rkuta4(self, f):
+      n = self.n
       to = self.t_o
       hf = self.hf
       f0 = self.f0
@@ -100,10 +106,12 @@ class integradores:
           t += h
       return s, T
 
-  def rk4_2(self, f, f0,g0, n, hf, to):
+  def rk4_2(self, f):
     to = self.t_o
     hf = self.hf
     f0 = self.f0
+    g0 = self.g0
+    n = self.n
     s = [f0]
     v = [g0]
     T = [to]
@@ -125,10 +133,12 @@ class integradores:
     return  v,s, T
 
 
-  def StormerV(self, f, f0,g0, n, h, to):
+  def StormerV(self, f):
     to = self.t_o
     h = self.hf
     f0 = self.f0
+    n = self.n
+    g0 = self.g0
     p, q = np.zeros(n), np.zeros(n)
     T = [to, to + h]
     p[0], q[0] = f0, g0
@@ -140,7 +150,8 @@ class integradores:
 
     return list(p), list(q), T
 
-  def SEuler(self, f,g, f0,g0, n, h, to):
+  def SEuler(self, f, g):
+    n = self.n
     to = self.t_o
     h = self.hf
     f0 = self.f0
@@ -156,13 +167,13 @@ class integradores:
     return list(p), list(q), T
 
 
-integ = integradores([1], 0, [1], 1e4, 1e-3)
+integ = integradores(f0 = [1], g0 = [1], t_o = 0, n = 1e4, hf = 1e-3)
 
 def dynamics_solve(f, f0 = [1],  n = 100,hf = 100, D = 1, t_o = 0, method = "Euler"):
     method_dict = {
-        "Euler": integ.euler,
-        "RK2": integ.rkuta2,
-        "RK4": integ.rkuta4
+        "Euler": integ.euler(f),
+        "RK2": integ.rkuta2(f),
+        "RK4": integ.rkuta4(f)
     }
     if method not in method_dict:
         return None
@@ -176,10 +187,10 @@ def dynamics_solve(f, f0 = [1],  n = 100,hf = 100, D = 1, t_o = 0, method = "Eul
 def hamiltonian_solve(f,g, f0 = [1],g0=[1],  n = 100, h = 0.1,hf = 100, D = 1, t_o = 0, method = "Euler"):
   if method == "Euler":
     if D==1:
-      vsolp, vsolq, T = integ.euler2(f[0], f0[0], g0[0], n, hf, t_o)
+      vsolp, vsolq, T = integ.euler2(f[0])
       return (vsolp), (vsolq), (T)
     else:
-      vsolp, vsolq, T = integ.euler2(f[0], f0[0], g0[0], n, hf, t_o)
+      vsolp, vsolq, T = integ.euler2(f[0])
       for i in range(D):
         eul = integ.euler2(f[i], f0[i], g0[i], n, hf, t_o)
         vsolp.append(eul[0])
@@ -188,45 +199,50 @@ def hamiltonian_solve(f,g, f0 = [1],g0=[1],  n = 100, h = 0.1,hf = 100, D = 1, t
       return vsolp, vsolq, T
   elif method == "RK2":
     if D==1:
-      vsolp, vsolq, T = integ.rk2_2(f[0], f0[0], g0[0], n, hf, t_o)
+      vsolp, vsolq, T = integ.rk2_2(f[0])
       return vsolp, vsolq, T
     else:
-      vsolp, vsolq, T = integ.rk2_2(f[0], f0[0], g0[0], n, hf, t_o)
+      vsolp, vsolq, T = integ.rk2_2(f[0])
       for i in range(D):
-        eul = integ.rk2_2(f[i], f0[i], g0[i], n, hf, t_o)
+        integi = integradores(f0 = f0[i], g0 = g0[i], n = n, hf = hf, t_o = t_o)
+        eul = integi.rk2_2(f[i])
         vsolp.append(eul[0])
         vsolq.append(eul[1])
 
       return vsolp, vsolq, T
   elif method == "RK4":
     if D==1:
-      vsolp, vsolq, T = integ.rk4_2(f[0], f0[0], g0[0], n, hf, t_o)
+      vsolp, vsolq, T = integ.rk4_2(f[0])
       return vsolp, vsolq, T
     else:
-      vsolp, vsolq, T = integ.rk4_2(f[0], f0[0], g0[0], n, hf, t_o)
+      vsolp, vsolq, T = integ.rk4_2(f[0])
       for i in range(D):
-        eul = integ.rk4_2(f[i], f0[i], g0[i], n, hf, t_o)
+        integi = integradores(f0 = f0[i], g0 = g0[i], n = n, hf = hf, t_o = t_o)
+        eul = integi.rk4_2(f[i])
         vsolp.append(eul[0])
         vsolq.append(eul[1])
 
       return vsolp, vsolq, T
   elif method == "SV":
-    solp, solq, T = integ.StormerV(f[0], f0[0], g0[0], n, h, t_o)
+    solp, solq, T = integ.StormerV(f[0])
     if D == 1:
       return solp, solq, T
     else:
       for i in range(D):
-        sverle = integ.StormerV(f[i], f0[i], g0[i], n, h, t_o)
+        integi = integradores(f0 = f0[i], g0 = g0[i], n = n, hf = hf, t_o = t_o)
+        
+        sverle = integi.StormerV(f[i])
         solp.append(sverle[0])
         solq.append(sverle[1])
       return solp, solq, T
   elif method == "SE":
-    solp, solq, T = integ.SEuler(f[0], g[0], f0[0], g0[0], n, h, t_o)
+    solp, solq, T = integ.SEuler(f[0])
     if D ==1:
       return solp, solq, T
     else:
       for i in range(D):
-        seu = integ.SEuler(f[i], g[i], f0[i], g0[i], n, h, t_o)
+        integi = integradores(f0 = f0[i], g0 = g0[i], n = n, hf = hf, t_o = t_o)
+        seu = integi.SEuler(f[i], g[i])
         solp.append(seu[0])
         solq.append(seu[1])
 
